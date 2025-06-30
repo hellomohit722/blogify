@@ -85,7 +85,7 @@ export default function ViewBlog() {
           style={{ width: "500px", height: "300px", objectFit: "cover" }}
         />
       </div>
-      <p className="blog-body">{blog.body}</p>
+      <pre className="blog-body">{blog.body}</pre>
 
       <div className="blog-author-wrapper">
         <img
