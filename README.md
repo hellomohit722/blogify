@@ -92,10 +92,6 @@ blogify is a full-stack blogging platform built using the MERN stack (MongoDB, E
 - 📊 Dashboard with user engagement analytics
 - 🏷 Add support for tags, categories, and author profiles
 
-🧾 License
-----------
-This project is open-source and available under the MIT License.
-
 🙌 Acknowledgments
 ------------------
 - OpenAI (https://openai.com/)
