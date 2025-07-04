@@ -79,8 +79,10 @@ blogAI is a full-stack blogging platform built using the MERN stack (MongoDB, Ex
 📸 Screenshots
 --------------
 
-![Homepage Screenshot](https://github.com/your-username/blogAI/assets/homepage.png)
-![Post Screenshot](https://github.com/your-username/blogAI/assets/post.png)
+![image](https://github.com/user-attachments/assets/b4452af1-7463-4034-90c5-f245730bb5c7)
+
+![image](https://github.com/user-attachments/assets/225d351f-33bd-4eb1-a24f-806a7769a69a)
+
 
 🧠 Future Enhancements
 ----------------------
