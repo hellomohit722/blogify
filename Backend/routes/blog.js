@@ -45,6 +45,38 @@ router.get("/:id", restrictTo(["admin","user"]), async (req, res) => {
   }
 });
 
+router.put("/:id",restrictTo(["admin", "user"]),upload.single("coverImage"),async (req, res) => {
+    try {
+      const blog = await Blog.findById(req.params.id);
+      if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+      //  Authorisation: allow if admin or blog owner
+      const requesterId = req.body.userId;        // sent from the client
+      const isAdmin     = req.user?.role === "admin";
+      const isOwner     = blog.createdBy.toString() === requesterId;
+      if (!isAdmin && !isOwner)
+        return res.status(403).json({ error: "You are not allowed to edit this blog" });
+
+      //   Pick up new fields
+      const { title, body } = req.body;
+      if (title !== undefined) blog.title = title;
+      if (body  !== undefined) blog.body  = body;
+
+      //  Replace cover image if a new one was sent
+      if (req.file) blog.coverImage = req.file.path;
+
+
+      await blog.save();
+      const populatedBlog = await blog.populate("createdBy");
+      res.status(200).json({ blog: populatedBlog });
+    } catch (err) {
+      console.error("Blog update error:", err);
+      res.status(500).json({ error: err.message || "Internal server error" });
+    }
+  }
+);
+
+
 router.delete("/delete/:blogId", restrictTo(["admin"]), async (req, res) => {
   try {
     const blogId = req.params.blogId;
