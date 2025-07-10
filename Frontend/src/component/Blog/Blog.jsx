@@ -1,46 +1,67 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import UseUser from "../UserContext/UserContext";
 import toast from "react-hot-toast";
-import "./Blog.css";
-// import Home from "../Home/Home";
 import axiosInstance from "../API/axiosInstance";
 import CircularIndeterminate from "./CircularIndeterminate";
-const baseURL = axiosInstance.defaults.baseURL;
-import { useNavigate } from "react-router-dom";
 import ChatbotToggle from "../ChatBot/ChatbotToggle";
 import ChatWindow from "../ChatBot/ChatWindow";
+import { FaEdit, FaSave } from "react-icons/fa";
+import "./Blog.css";
 
-export default function ViewBlog() {
+const baseURL = axiosInstance.defaults.baseURL;
+
+export default function Blog() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const { CurrentUser: user, setCurrentUser } = UseUser();
+
   const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
   const [showChatbot, setShowChatbot] = useState(false);
+  const [editable, setEditable] = useState(false);
+  const [newCoverImage, setNewCoverImage] = useState(null);
 
   useEffect(() => {
     async function fetchBlog() {
       try {
         const res = await axiosInstance.get(`/blog/${id}`);
-
         setBlog(res.data.blog);
-
         setComments(res.data.comments);
 
         const homeRes = await axiosInstance.get("/home");
         setCurrentUser(homeRes.data.user);
       } catch (err) {
-        navigate("/"); // Redirect to home if blog not found
+        navigate("/");
         toast.error("Failed to fetch blog. Please try again.");
         console.error("Error fetching blog:", err);
       }
     }
-    fetchBlog(); // why this function is called here
-    // The function fetchBlog is defined and immediately invoked to fetch the blog data when the component mounts.
+    fetchBlog();
   }, [id]);
+
+  const handleBlogUpdate = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("title", blog.title);
+      formData.append("body", blog.body);
+      formData.append("userId", user._id);
+      if (newCoverImage) formData.append("coverImage", newCoverImage);
+
+      const res = await axiosInstance.put(`/blog/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setBlog(res.data.blog);
+      setEditable(false);
+      setNewCoverImage(null);
+      toast.success("Blog updated successfully!");
+    } catch (err) {
+      toast.error("Failed to update blog.");
+      console.error("Update error:", err);
+    }
+  };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -63,7 +84,6 @@ export default function ViewBlog() {
     try {
       await axiosInstance.delete(`/blog/comment/${commentId}`);
       toast.success("Comment deleted successfully!");
-
       const res = await axiosInstance.get(`/blog/${id}`);
       setComments(res.data.comments);
     } catch (err) {
@@ -72,21 +92,80 @@ export default function ViewBlog() {
     }
   };
 
-  if (!blog) return <CircularIndeterminate className="loading-spinner" />; // Show loading spinner if blog is not yet fetched
+  if (!blog) return <CircularIndeterminate className="loading-spinner" />;
+
+  const isOwner = user && blog.createdBy._id === user._id || user?.role === "admin";
 
   return (
     <div className="blog-container">
-      <h1 className="blog-title">{blog.title}</h1>
+      {/* Title */}
+      <div className="blog-title-section">
+        {editable ? (
+          <input
+            type="text"
+            value={blog.title}
+            onChange={(e) => setBlog({ ...blog, title: e.target.value })}
+            className="blog-title-input"
+          />
+        ) : (
+          <h1 className="blog-title">{blog.title}</h1>
+        )}
+        {isOwner && (
+          <button
+            onClick={() => {
+              if (editable) handleBlogUpdate();
+              setEditable((prev) => !prev);
+            }}
+            className="edit-button"
+          >
+            {editable ? <FaSave /> : <FaEdit />}
+          </button>
+        )}
+      </div>
+
+      {/* Cover Image */}
       <div className="blog-image-wrapper">
         <img
-          src={blog.coverImage}
+          src={
+            newCoverImage ? URL.createObjectURL(newCoverImage) : blog.coverImage
+          }
           alt="Blog Cover"
           className="blog-cover-image"
-          style={{ width: "500px", height: "300px", objectFit: "cover" }}
         />
       </div>
-      <p className="blog-body">{blog.body}</p>
+      {editable && (
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setNewCoverImage(e.target.files[0])}
+          className="cover-image-input flex"
+        />
+      )}
 
+      {/* Body */}
+      <div className="blog-body-section">
+        <textarea
+          ref={(el) => {
+            if (el) {
+              el.style.height = "auto";
+              el.style.height = el.scrollHeight + "px";
+            }
+          }}
+          rows={1}
+          value={blog.body}
+          onChange={(e) => {
+            const textarea = e.target;
+            setBlog({ ...blog, body: textarea.value });
+
+            textarea.style.height = "auto"; // Reset height
+            textarea.style.height = textarea.scrollHeight + "px"; // Set new height
+          }}
+          readOnly={!editable}
+          className="blog-body-textarea"
+        />
+      </div>
+
+      {/* Author Info */}
       <div className="blog-author-wrapper">
         <img
           src={`${baseURL}${blog.createdBy.profileImage}`}
@@ -96,6 +175,8 @@ export default function ViewBlog() {
         />
         <span className="font-medium">Created By {blog.createdBy.name}</span>
       </div>
+
+      {/* Comments */}
       <div className="comment-section">
         <h2 className="comment-heading">Comments</h2>
         {user && (
@@ -114,9 +195,11 @@ export default function ViewBlog() {
           </form>
         )}
       </div>
+
       <h1 style={{ fontSize: "1.875rem", fontWeight: "600" }}>
         Comment ({comments.length})
       </h1>
+
       <div className="comment-Blog">
         <div className="comment-list">
           {comments.map((comment) => (
@@ -147,6 +230,8 @@ export default function ViewBlog() {
           ))}
         </div>
       </div>
+
+      {/* Chatbot */}
       <div>
         <ChatbotToggle onClick={() => setShowChatbot(!showChatbot)} />
         {showChatbot && <ChatWindow blogId={id} />}
