@@ -80,12 +80,13 @@ export default function LoginForm() {
   }, []);
 
   return (
+    <div className="main_container">
     <div className="container" ref={containerRef}>
 
       {/* Sign Up Form */}
       <div className="form-container sign-up-container">
         <form onSubmit={handleSignup}>
-          <h1>Create Account</h1>
+          <h1 className="heading">Create Account</h1>
           <input
           className="input-field"
             type="text"
@@ -117,7 +118,7 @@ export default function LoginForm() {
       {/* Sign In Form */}
       <div className="form-container sign-in-container">
         <form onSubmit={handleSignin}>
-          <h1>Login</h1>
+          <h1 className="heading">Login</h1>
           <input
           className="input-field"
             type="email"
@@ -134,7 +135,6 @@ export default function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
           />
-          <a href="#">Forgot your password?</a>
           <button type="submit">Sign In</button>
         </form>
       </div>
@@ -143,17 +143,18 @@ export default function LoginForm() {
       <div className="overlay-container">
         <div className="overlay">
           <div className="overlay-panel overlay-left">
-            <h1>Welcome Back!</h1>
-            <p>Please login with your personal info</p>
+            <h1 className="heading">Welcome Back!</h1>
+            <p className="para">Please login with your personal info</p>
             <button className="ghost" ref={signInRef}>Sign In</button>
           </div>
           <div className="overlay-panel overlay-right">
-            <h1>Hello, Friend!</h1>
-            <p>Enter your personal details to get started</p>
+            <h1 className="heading">Hello, Friend!</h1>
+            <p className="para">Enter your personal details to get started</p>
             <button className="ghost" ref={signUpRef}>Sign Up</button>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
