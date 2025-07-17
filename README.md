@@ -4,7 +4,7 @@
 blogify is a full-stack blogging platform built using the MERN stack (MongoDB, Express.js, React.js, Node.js). It enables users to create, view, and comment on blog posts through a clean user interface and a modular backend. It also features AI-powered content summaries using OpenAI.
 
 🌐 Live Demo  
-👉 Click here to try blogAI: [https://blogify-frontend-lyart.vercel.app/](https://blogify-frontend-lyart.vercel.app/)
+👉 Click here to try blogify: [https://blogify-frontend-lyart.vercel.app/](https://blogify-frontend-lyart.vercel.app/)
 
 🛠 Tech Stack
 -------------
