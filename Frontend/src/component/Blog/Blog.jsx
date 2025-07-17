@@ -6,12 +6,12 @@ import axiosInstance from "../API/axiosInstance";
 import CircularIndeterminate from "./CircularIndeterminate";
 import ChatbotToggle from "../ChatBot/ChatbotToggle";
 import ChatWindow from "../ChatBot/ChatWindow";
-import { FaEdit, FaSave } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
+import { FaSave } from "react-icons/fa";
 import "./Blog.css";
 
-const baseURL = axiosInstance.defaults.baseURL;
-
 export default function Blog() {
+  const baseURL = axiosInstance.defaults.baseURL;
   const { id } = useParams();
   const navigate = useNavigate();
   const { CurrentUser: user, setCurrentUser } = UseUser();
@@ -94,22 +94,13 @@ export default function Blog() {
 
   if (!blog) return <CircularIndeterminate className="loading-spinner" />;
 
-  const isOwner = user && blog.createdBy._id === user._id || user?.role === "admin";
+  const isOwner =
+    (user && blog.createdBy._id === user._id) || user?.role === "admin";
 
   return (
     <div className="blog-container">
       {/* Title */}
-      <div className="blog-title-section">
-        {editable ? (
-          <input
-            type="text"
-            value={blog.title}
-            onChange={(e) => setBlog({ ...blog, title: e.target.value })}
-            className="blog-title-input"
-          />
-        ) : (
-          <h1 className="blog-title">{blog.title}</h1>
-        )}
+      <div className="edit-btn">
         {isOwner && (
           <button
             onClick={() => {
@@ -122,12 +113,25 @@ export default function Blog() {
           </button>
         )}
       </div>
+      <div className="blog-title-section">
+        {editable ? (
+          <input
+            type="text"
+            value={blog.title}
+            onChange={(e) => setBlog({ ...blog, title: e.target.value })}
+            className="blog-title-input"
+          />
+        ) : (
+          <h1 className="blog-title">{blog.title}</h1>
+        )}
+      </div>
 
       {/* Cover Image */}
       <div className="blog-image-wrapper">
         <img
           src={
             newCoverImage ? URL.createObjectURL(newCoverImage) : blog.coverImage
+            // Creates a temporary URL for previewing the uploaded image file in the browser
           }
           alt="Blog Cover"
           className="blog-cover-image"
@@ -138,7 +142,7 @@ export default function Blog() {
           type="file"
           accept="image/*"
           onChange={(e) => setNewCoverImage(e.target.files[0])}
-          className="cover-image-input flex"
+          className="cover-image-input"
         />
       )}
 
@@ -158,7 +162,7 @@ export default function Blog() {
             setBlog({ ...blog, body: textarea.value });
 
             textarea.style.height = "auto"; // Reset height
-            textarea.style.height = textarea.scrollHeight + "px"; // Set new height
+            textarea.style.height = textarea.scrollHeight + "px"; // Grow to fit text
           }}
           readOnly={!editable}
           className="blog-body-textarea"
@@ -178,7 +182,7 @@ export default function Blog() {
 
       {/* Comments */}
       <div className="comment-section">
-        <h2 className="comment-heading">Comments</h2>
+        {/* <h2 className="comment-heading">Comments Section</h2> */}
         {user && (
           <form onSubmit={handleCommentSubmit} className="comment-form">
             <input
@@ -196,7 +200,15 @@ export default function Blog() {
         )}
       </div>
 
-      <h1 style={{ fontSize: "1.875rem", fontWeight: "600" }}>
+      <h1
+        style={{
+          fontSize: "1.875rem",
+          fontWeight: "600",
+          display: "flex",
+          justifySelf: "center",
+          color: "black",
+        }}
+      >
         Comment ({comments.length})
       </h1>
 
@@ -230,11 +242,14 @@ export default function Blog() {
           ))}
         </div>
       </div>
+      <footer className="copy-right">
+        © 2025 Blogify. All rights reserved.
+      </footer>
 
       {/* Chatbot */}
       <div>
         <ChatbotToggle onClick={() => setShowChatbot(!showChatbot)} />
-        {showChatbot && <ChatWindow blogId={id} />}
+        {showChatbot && <ChatWindow blogId={id} onClick={() => setShowChatbot(false)} />}
       </div>
     </div>
   );
