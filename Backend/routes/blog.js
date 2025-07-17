@@ -80,10 +80,9 @@ router.put("/:id",restrictTo(["admin", "user"]),upload.single("coverImage"),asyn
 router.delete("/delete/:blogId", restrictTo(["admin"]), async (req, res) => {
   try {
     const blogId = req.params.blogId;
-
     await Blog.findByIdAndDelete(blogId);
-
-    res.status(200).json({ message: "Blog deleted successfully" });
+    const blogs = await Blog.find({});
+    res.status(200).json({blogs});
   } catch (err) {
     console.error("Error deleting blog:", err);
     res.status(500).json({ message: "Error deleting blog" });
