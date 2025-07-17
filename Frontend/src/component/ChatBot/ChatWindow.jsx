@@ -54,7 +54,7 @@ const ChatWindow = ({ blogId , onClick }) => {
     <button className="chat-close-button" title="close" onClick={onClick}>❌</button>
       <hr style={{ border: "none", borderTop: "1px solid #eee", marginTop: "-1.5rem", marginBottom: "0.5rem" }} />
       <div className="chat-messages">
-        {messages.length === 0 && <div className="chat-message bot">...</div>}
+        {messages.length === 0 && <div className="chat-message bot">Start Conversation with AI</div>}
         {messages.map((msg, i) => (
           <div
             key={i}
