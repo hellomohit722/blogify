@@ -1,0 +1,39 @@
+.chatbot-toggle {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    cursor: pointer;
+    z-index: 50;
+    animation: buzz-once 0.6s ease;
+}
+
+.chatbot-icon {
+    width: 6.25rem;
+    height: 4.5rem;
+}
+
+@keyframes buzz-once {
+    0% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.05);
+    }
+
+    50% {
+        transform: scale(0.95);
+    }
+
+    75% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1.5);
+    }
+}
+
+.chatbot-icon:hover {
+    animation: buzz-once 0.6s ease;
+}

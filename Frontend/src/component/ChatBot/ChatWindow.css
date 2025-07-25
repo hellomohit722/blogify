@@ -2,8 +2,8 @@
   position: fixed;
   bottom: 6rem;
   right: 1.5rem;
-  width: 320px;
-  height: 380px;
+  width: 420px;
+  height: 480px;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -11,6 +11,18 @@
   z-index: 999;
   display: flex;
   flex-direction: column;
+}
+.chat-close-button{
+  position: relative;
+  top: -1.5rem;
+  right: -3rem;
+  display: flex;
+  justify-content: flex-end;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #4b5563;
 }
 
 .chat-messages {
@@ -48,7 +60,7 @@
 
 .chat-bubble.bot {
   background-color: #f3f4f6;
-  color: #1f2937;
+  color: #0e3162;
 }
 
 .chat-input-row {

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import UseUser from "../UserContext/UserContext";
 import axiosInstance from "../API/axiosInstance";
 import toast from "react-hot-toast";
 import "./ChatWindow.css";
 
 
-const ChatWindow = ({ blogId }) => {
-  const { CurrentUser: user, setCurrentUser } = UseUser();
+const ChatWindow = ({ blogId , onClick }) => {
+  const {setCurrentUser } = UseUser();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
@@ -17,6 +17,7 @@ const ChatWindow = ({ blogId }) => {
         setCurrentUser(resUser.data.user);
 
         const resChat = await axiosInstance.get(`/chatbot/history/${blogId}`);
+
         setMessages(resChat.data.messages || []);
       } catch (error) {
         toast.error("Failed to load user or chat history.");
@@ -45,13 +46,15 @@ const ChatWindow = ({ blogId }) => {
       toast.error("Failed to send message.");
       console.error("Chat error:", error);
     }
-
     setInput("");
   };
 
   return (
     <div className="chat-window">
+    <button className="chat-close-button" title="close" onClick={onClick}>❌</button>
+      <hr style={{ border: "none", borderTop: "1px solid #eee", marginTop: "-1.5rem", marginBottom: "0.5rem" }} />
       <div className="chat-messages">
+        {messages.length === 0 && <div className="chat-message bot">Start Conversation with AI</div>}
         {messages.map((msg, i) => (
           <div
             key={i}

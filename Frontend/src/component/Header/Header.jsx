@@ -27,10 +27,10 @@ export default function Header() {
 
           {/* Navigation Links */}
           <ul className="nav-links">
-            <li><NavLink to="/" activeClassName="active">Home</NavLink></li>
-            <li><NavLink to="/about" activeClassName="active">About</NavLink></li>
-            <li><NavLink to="/contact" activeClassName="active">Contact</NavLink></li>
-            <li><NavLink to="/github" activeClassName="active">AI Help</NavLink></li>
+            <li><NavLink to="/">Home</NavLink></li>
+            <li><NavLink to="/about">About</NavLink></li>
+            <li><NavLink to="/contact">Contact</NavLink></li>
+            {/* <li><NavLink to="/github" activeClassName="active">AI Help</NavLink></li> */}
           </ul>
 
           {/* Auth Buttons */}

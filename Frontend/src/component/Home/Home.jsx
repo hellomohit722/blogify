@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import UseUser from "../UserContext/UserContext";
 import "./Home.css";
 import axiosInstance from "../API/axiosInstance";
-import toast from "react-hot-toast"; // for notifications
+import toast from "react-hot-toast";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -30,20 +30,18 @@ const handleDelete = async (blogId) => {
   if (!confirm) return;
 
   try {
-    await axiosInstance.delete(`/blog/delete/${blogId}`);
+    const res = await axiosInstance.delete(`/blog/delete/${blogId}`);
     toast.success("Blog deleted successfully");
-
-    const updatedBlogs = blogs.filter((blog) => blog._id !== blogId);
-    setAllBlogs(updatedBlogs);
+    setAllBlogs(res.data.blogs);
   } catch (error) {
     toast.error("Failed to delete blog");
     console.error("Delete error:", error);
   }
 };
 
-
   return (
-    <div className="blog-container">
+    <div className="home-container">
+    <h1 className="home-title">Welcome {user?.name}</h1>
       {blogs.length === 0 ? (
         <p>No blogs available.</p>
       ) : (
@@ -60,10 +58,7 @@ const handleDelete = async (blogId) => {
                 <img
                   src={blog.coverImage}
                   alt={blog.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.src = "/default.jpg";
-                  }}
+                  className="card-img"
                 />
               </div>
               <div className="blog-card-body">

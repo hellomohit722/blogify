@@ -20,6 +20,13 @@
   margin-right: 10px;
 }
 
+.Generate-Content-buffer{
+  display: flex;
+  position: relative;
+  top: -7rem;
+  left: 17rem;
+  justify-self: left;
+}
 
 .form-group input{
     flex: 1;
@@ -30,6 +37,9 @@
     transition: border-color 0.3s ease-in-out;
 }
 .form-group textarea {
+  font-size: large;
+  line-height: 1.5;
+  font-weight: 600;
   flex: 1;
   padding: 10px;
   border: 1.5px solid #ccc;
@@ -56,6 +66,27 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s ease-in-out;
+}
+
+.Generate-Content{
+  position: relative;
+  top: -5rem;
+  left: 3rem;
+}
+
+.Generate-button {
+  width: 15%;
+  display: block;
+  margin-left: 160px;
+  padding: 10px 25px;
+  background-color: #e31212;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+
 }
 
 .submit-button:hover {

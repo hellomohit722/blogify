@@ -4,12 +4,15 @@ import toast from "react-hot-toast";
 import UseUser from "../UserContext/UserContext";
 import "./AddBlog.css";
 import axiosInstance from "../API/axiosInstance";
+import CircularIndeterminate from "./CircularIndeterminate";
 
 export default function AddBlog() {
   const { CurrentUser, setCurrentUser, setAllBlogs } = UseUser();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [coverImage, setCoverImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +29,26 @@ export default function AddBlog() {
     };
     fetchData();
   }, []);
+
+  
+
+const handleGenerateBlog = async () => {
+  setIsLoading(true);
+  try {
+    const res = await axiosInstance.post("/blog/generate", {
+      title,
+      body,
+      userId: CurrentUser._id,
+    });
+    setBody(res.data.generatedBlog);
+  } catch (error) {
+    console.error("Error generating blog:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
 
   const handleBlogSubmit = async (e) => {
@@ -45,9 +68,7 @@ export default function AddBlog() {
           'Content-Type': 'multipart/form-data',
         }
       });
-      console.log("res---->",res);
 
-      // ✅ Add new blog to AllBlogs if it's not already present
       setAllBlogs((prevBlogs) => {
         const alreadyExists = prevBlogs.some(
           (b) => b._id === res.data.blog._id
@@ -61,7 +82,7 @@ export default function AddBlog() {
       toast.error("Failed to create blog.");
       if (err.response) {
     console.error("Backend error response:", err.response.data);
-    alert(err.response.data.error); // 🔥 Instead of [object Object]
+    alert(err.response.data.error); 
   } else {
     console.error("Unknown error:", err.message);
     alert("Something went wrong");
@@ -97,11 +118,12 @@ export default function AddBlog() {
         <div className="form-group">
           <label>Body</label>
           <textarea
+            className="blog-body"
             name="body"
             value={body}
             onChange={(e) => setBody(e.target.value)}
             placeholder="Write your blog content here..."
-            rows={5}
+            rows={15}
             required
           ></textarea>
         </div>
@@ -110,6 +132,17 @@ export default function AddBlog() {
           Submit
         </button>
       </form>
+      {isLoading ? (
+        <div className="Generate-Content-buffer">
+          <CircularIndeterminate  />
+        </div>
+      ) : (
+        <div className="Generate-Content">
+          <button onClick={handleGenerateBlog} className="Generate-button">
+            Generate Blog from AI
+          </button>
+        </div>
+      )}
     </div>
   );
 }
