@@ -8,8 +8,8 @@ import ChatbotToggle from "../ChatBot/ChatbotToggle";
 import ChatWindow from "../ChatBot/ChatWindow";
 import { FaSave, FaEdit } from "react-icons/fa";
 import { MdPersonAddAlt1 } from "react-icons/md";
-import { io } from "socket.io-client";
-import CollaboratorPanel from "./CollaboratorPanel";
+// import { io } from "socket.io-client";
+// import CollaboratorPanel from "./CollaboratorPanel";
 import "./Blog.css";
 
 export default function Blog() {
@@ -25,35 +25,35 @@ export default function Blog() {
   const [showChatbot, setShowChatbot] = useState(false);
   const [editable, setEditable] = useState(false);
   const [newCoverImage, setNewCoverImage] = useState(null);
-  const [customRoomId, setCustomRoomId] = useState("");
-  const [currentRoom, setCurrentRoom] = useState(null);
-  const socketRef = useRef(null);
-  const [showCollaboratorPanel, setShowCollaboratorPanel] = useState(false);
+  // const [customRoomId, setCustomRoomId] = useState("");
+  // const [currentRoom, setCurrentRoom] = useState(null);
+  // const socketRef = useRef(null);
+  // const [showCollaboratorPanel, setShowCollaboratorPanel] = useState(false);
 
-useEffect(() => {
-  const socket = io(baseURL);
-  socketRef.current = socket;
+// useEffect(() => {
+//   const socket = io(baseURL);
+//   socketRef.current = socket;
 
-  socket.on("user-joined", (userSocketId) => {
-    console.log(`Another user joined the room: ${userSocketId}`);
-  });
+//   socket.on("user-joined", (userSocketId) => {
+//     console.log(`Another user joined the room: ${userSocketId}`);
+//   });
   
 
-  socket.on("receive-body", (updatedBody) => {
-    setBlog((prevBlog) => ({
-      ...prevBlog,
-      body: updatedBody,
-    }));
-  });
+//   socket.on("receive-body", (updatedBody) => {
+//     setBlog((prevBlog) => ({
+//       ...prevBlog,
+//       body: updatedBody,
+//     }));
+//   });
 
-  socket.on("room-ended", () => {
-    toast.success("The collaboration session has ended.");
-    setEditable(false);
-    setShowCollaboratorPanel(false);
-  });
+//   socket.on("room-ended", () => {
+//     toast.success("The collaboration session has ended.");
+//     setEditable(false);
+//     setShowCollaboratorPanel(false);
+//   });
 
-  return () => socket.disconnect();
-}, []);
+//   return () => socket.disconnect();
+// }, []);
 
 
   useEffect(() => {
@@ -133,8 +133,8 @@ useEffect(() => {
   return (
     <div className="blog-container">
       {/* Title */}
-      <div className="edit-btn">
-        {isOwner ? (
+ {/*     <div className="edit-btn">
+         {isOwner ? (
           <div className="edit-collab-buttons">
             <button
               className="collab-button"
@@ -158,7 +158,7 @@ useEffect(() => {
               />
             )}
 
-            <button
+             <button
               onClick={() => {
                 if (editable) handleBlogUpdate();
                 setEditable((prev) => !prev);
@@ -193,7 +193,7 @@ useEffect(() => {
             )}
           </div>
         )}
-      </div>
+      </div> */}
 
       <div className="blog-title-section">
         {editable ? (
@@ -244,13 +244,13 @@ useEffect(() => {
             const newBody = e.target.value;
             setBlog((prev) => ({ ...prev, body: newBody }));
 
-            const roomId = `${blog._id}`;
-            if (socketRef.current && editable) {
-              socketRef.current.emit("send-body", {
-                roomId,
-                body: newBody,
-              });
-            }
+            // const roomId = `${blog._id}`;
+            // if (socketRef.current && editable) {
+            //   socketRef.current.emit("send-body", {
+            //     roomId,
+            //     body: newBody,
+            //   });
+            // }
 
             const el = e.target;
             el.style.height = "auto";
