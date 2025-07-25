@@ -25,36 +25,6 @@ export default function Blog() {
   const [showChatbot, setShowChatbot] = useState(false);
   const [editable, setEditable] = useState(false);
   const [newCoverImage, setNewCoverImage] = useState(null);
-  // const [customRoomId, setCustomRoomId] = useState("");
-  // const [currentRoom, setCurrentRoom] = useState(null);
-  // const socketRef = useRef(null);
-  // const [showCollaboratorPanel, setShowCollaboratorPanel] = useState(false);
-
-// useEffect(() => {
-//   const socket = io(baseURL);
-//   socketRef.current = socket;
-
-//   socket.on("user-joined", (userSocketId) => {
-//     console.log(`Another user joined the room: ${userSocketId}`);
-//   });
-  
-
-//   socket.on("receive-body", (updatedBody) => {
-//     setBlog((prevBlog) => ({
-//       ...prevBlog,
-//       body: updatedBody,
-//     }));
-//   });
-
-//   socket.on("room-ended", () => {
-//     toast.success("The collaboration session has ended.");
-//     setEditable(false);
-//     setShowCollaboratorPanel(false);
-//   });
-
-//   return () => socket.disconnect();
-// }, []);
-
 
   useEffect(() => {
     async function fetchBlog() {
@@ -133,31 +103,8 @@ export default function Blog() {
   return (
     <div className="blog-container">
       {/* Title */}
- {/*     <div className="edit-btn">
-         {isOwner ? (
-          <div className="edit-collab-buttons">
-            <button
-              className="collab-button"
-              onClick={() => setShowCollaboratorPanel((prev) => !prev)}
-            >
-              <MdPersonAddAlt1 />
-            </button>
-
-            {showCollaboratorPanel && blog && (
-              <CollaboratorPanel
-                blogId={blog._id}
-                socket={socketRef.current}
-                user={user}
-                blogCreatorId={blog.createdBy._id}
-                customRoomId={customRoomId}
-                setCustomRoomId={setCustomRoomId}
-                currentRoom={currentRoom} 
-                setCurrentRoom={setCurrentRoom}
-                onEditableChange={setEditable}
-                onClose={() => setShowCollaboratorPanel(false)}
-              />
-            )}
-
+     <div className="edit-btn">
+         {isOwner && (
              <button
               onClick={() => {
                 if (editable) handleBlogUpdate();
@@ -167,34 +114,9 @@ export default function Blog() {
             >
               {editable ? <FaSave /> : <FaEdit />}
             </button>
-          </div>
-        ) : (
-          <div className="edit-collab-buttons">
-            <button
-              className="collab-button"
-              onClick={() => setShowCollaboratorPanel((prev) => !prev)}
-            >
-              <MdPersonAddAlt1 />
-            </button>
-
-            {showCollaboratorPanel && blog && (
-              <CollaboratorPanel
-                blogId={blog._id}
-                socket={socketRef.current}
-                user={user}
-                blogCreatorId={blog.createdBy._id}
-                customRoomId={customRoomId}
-                setCustomRoomId={setCustomRoomId}
-                currentRoom={currentRoom} 
-                setCurrentRoom={setCurrentRoom}
-                onEditableChange={setEditable}
-                onClose={() => setShowCollaboratorPanel(false)}
-              />
-            )}
-          </div>
-        )}
-      </div> */}
-
+      )}
+      </div>
+      
       <div className="blog-title-section">
         {editable ? (
           <input
