@@ -6,6 +6,10 @@ blogAI is a full-stack blogging platform built using the MERN stack (MongoDB, Ex
 🌐 Live Demo  
 👉 Click here to try blogAI: [https://blogify-frontend-lyart.vercel.app/]
 
+For Demo purpose
+ID : Demo@gmail.com
+Password : 12345
+
 🛠 Tech Stack
 -------------
 - Frontend: React.js
