@@ -1,7 +1,6 @@
 .home-container{
-  min-width: 100vw;
+  margin-bottom: 100px;
 }
-
 .blog-header {
   text-align: center;
   font-size: 1.5rem;
