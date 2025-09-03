@@ -7,6 +7,7 @@ function Layout() {
     <>
         <Header/>
         <Outlet/>  {/* ← nested child components render here */}
+        <Footer/>
     </>
   )
 }
