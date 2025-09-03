@@ -284,10 +284,12 @@ section
     padding: 5rem 0;
 }
 .bg1{
-    background-image: url(/image/Collaboration.jpg);
+/*     background-image: url(/image/Collaboration.jpg); */
+	background-image: url(/image/AI.jpg);
 }
 .bg2{
-    background-image: url(/image/Reading.jpg);
+/*     background-image: url(/image/Reading.jpg); */
+	background-image: url(/image/AI.jpg);
 }
 .bg3{
     background-image: url(/image/AI.jpg);
