@@ -25,11 +25,11 @@ export default function Footer() {
               <h2>Follow us</h2>
               <ul>
                 <li>
-                  <a href="#" target="_blank" rel="noreferrer">
+                  <a href="https://github.com/hellomohit722" target="_blank" rel="noreferrer">
                     Github
                   </a>
                 </li>
-                <li><Link to="/">Discord</Link></li>
+                <li><Link to="/contact">Contact</Link></li>
               </ul>
             </div>
             <div>
