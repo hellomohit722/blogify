@@ -160,7 +160,7 @@ That’s the stale closure problem.
     const el = e.target;
     el.style.height = "auto";
     el.style.height = el.scrollHeight + "px";
-    el.scrollIntoView({ block: "nearest" });
+    // el.scrollIntoView({ block: "nearest" });
     // Sometimes the issue is that when the textarea expands, the cursor(caret) moves below the viewport.
     // Solution: use el.scrollIntoView({ block: "nearest" }).
     // is a DOM method that scrolls the page/container so that the element (el) is visible in the viewport.
