@@ -1,7 +1,7 @@
 /* CreateBlog.css */
 
 .create-blog-container {
-  max-width: 100%;
+  width: 90vw;
   margin: 40px auto;
   padding: 0 20px;
   font-family: Arial, sans-serif;
@@ -75,7 +75,7 @@
 }
 
 .Generate-button {
-  width: 15%;
+  /* width: 15%; */
   display: block;
   margin-left: 160px;
   padding: 10px 25px;
@@ -108,5 +108,7 @@
     margin-left: 0;
     width: 100%;
   }
+
+
   
 }
