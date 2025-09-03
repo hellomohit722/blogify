@@ -85,6 +85,9 @@ const handleDelete = async (blogId) => {
           ))}
         </div>
       )}
+      {/* <footer className="copy-right">
+        © 2025 Blogify. All rights reserved.
+      </footer> */}
     </div>
   );
 }
