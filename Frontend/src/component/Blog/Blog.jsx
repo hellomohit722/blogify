@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UseUser from "../UserContext/UserContext";
 import toast from "react-hot-toast";
@@ -8,8 +8,9 @@ import ChatbotToggle from "../ChatBot/ChatbotToggle";
 import ChatWindow from "../ChatBot/ChatWindow";
 import { FaSave, FaEdit } from "react-icons/fa";
 import { MdPersonAddAlt1 } from "react-icons/md";
-// import { io } from "socket.io-client";
-// import CollaboratorPanel from "./CollaboratorPanel";
+import { io } from "socket.io-client";
+import CollaboratorPanel from "./CollaboratorPanel";
+import debounce from "lodash.debounce";
 import "./Blog.css";
 
 export default function Blog() {
@@ -17,6 +18,7 @@ export default function Blog() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { CurrentUser: user, setCurrentUser } = UseUser();
+  const areaRef = useRef(null);
   
 
   const [blog, setBlog] = useState(null);
@@ -25,6 +27,38 @@ export default function Blog() {
   const [showChatbot, setShowChatbot] = useState(false);
   const [editable, setEditable] = useState(false);
   const [newCoverImage, setNewCoverImage] = useState(null);
+  const [customRoomId, setCustomRoomId] = useState("");
+  const [currentRoom, setCurrentRoom] = useState(null);
+  const socketRef = useRef(null);
+  const [showCollaboratorPanel, setShowCollaboratorPanel] = useState(false);
+
+useEffect(() => {
+  const socket = io(baseURL);
+  socketRef.current = socket;
+
+  const handleRecieveData = (updatedBody) => {
+    setBlog((prevBlog) => ({
+      ...prevBlog,
+      body: updatedBody,
+    }));
+  };
+
+  const handleroomEnd = () => {
+    toast.success("The collaboration session has ended.");
+    setEditable(false);
+    setShowCollaboratorPanel(false);
+  };
+  
+  socket.on("receive-body", handleRecieveData);
+  socket.on("room-ended", handleroomEnd);
+
+  return () => {
+    socket.off("receive-body", handleRecieveData);
+    socket.off("room-ended", handleroomEnd);
+    socket.disconnect();
+  };
+}, []);
+
 
   useEffect(() => {
     async function fetchBlog() {
@@ -43,6 +77,13 @@ export default function Blog() {
     }
     fetchBlog();
   }, [id]);
+
+  useEffect(() => {
+    const el = areaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }, [blog?.body]);
 
   const handleBlogUpdate = async () => {
     try {
@@ -95,6 +136,37 @@ export default function Blog() {
     }
   };
 
+  const emitBody = useCallback(
+    debounce((body) => {
+      if (socketRef.current && editable) {
+        socketRef.current.emit("send-body", { roomId: blog?._id, body });
+      }
+    }, 500),
+    [socketRef,editable]
+  );
+/*
+Suppose editable changes from true → false. If sendBodyUpdate is not re-created, 
+it will still think editable = true (from when it was first created). 
+That means the function could wrongly keep sending updates even when editing is disabled.
+That’s the stale closure problem.
+*/
+
+  const handleChange = (e) => {
+    const newBody = e.target.value;
+    setBlog((prev) => ({ ...prev, body: newBody }));
+
+    if (editable && currentRoom) emitBody(newBody);  // check here if error.
+
+    const el = e.target;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+    el.scrollIntoView({ block: "nearest" });
+    // Sometimes the issue is that when the textarea expands, the cursor(caret) moves below the viewport.
+    // Solution: use el.scrollIntoView({ block: "nearest" }).
+    // is a DOM method that scrolls the page/container so that the element (el) is visible in the viewport.
+    // "nearest" → scrolls as little as possible so the element is just visible.
+  };
+
   if (!blog) return <CircularIndeterminate className="loading-spinner" />;
 
   const isOwner =
@@ -103,9 +175,32 @@ export default function Blog() {
   return (
     <div className="blog-container">
       {/* Title */}
-     <div className="edit-btn">
-         {isOwner && (
-             <button
+      <div className="edit-btn">
+        {isOwner ? (
+          <div className="edit-collab-buttons">
+            <button
+              className="collab-button"
+              onClick={() => setShowCollaboratorPanel((prev) => !prev)}
+            >
+              <MdPersonAddAlt1 />
+            </button>
+
+            {showCollaboratorPanel && (
+              <CollaboratorPanel
+                blogId={blog._id}
+                socket={socketRef.current}
+                user={user}
+                blogCreatorId={blog.createdBy._id}
+                customRoomId={customRoomId}
+                setCustomRoomId={setCustomRoomId}
+                currentRoom={currentRoom} 
+                setCurrentRoom={setCurrentRoom}
+                onEditableChange={setEditable}
+                onClose={() => setShowCollaboratorPanel(false)}
+              />
+            )}
+
+            <button
               onClick={() => {
                 if (editable) handleBlogUpdate();
                 setEditable((prev) => !prev);
@@ -114,9 +209,34 @@ export default function Blog() {
             >
               {editable ? <FaSave /> : <FaEdit />}
             </button>
-      )}
+          </div>
+        ) : (
+          <div className="edit-collab-buttons">
+            <button
+              className="collab-button"
+              onClick={() => setShowCollaboratorPanel((prev) => !prev)}
+            >
+              <MdPersonAddAlt1 />
+            </button>
+
+            {showCollaboratorPanel && (
+              <CollaboratorPanel
+                blogId={blog._id}
+                socket={socketRef.current}
+                user={user}
+                blogCreatorId={blog.createdBy._id}
+                customRoomId={customRoomId}
+                setCustomRoomId={setCustomRoomId}
+                currentRoom={currentRoom} 
+                setCurrentRoom={setCurrentRoom}
+                onEditableChange={setEditable}
+                onClose={() => setShowCollaboratorPanel(false)}
+              />
+            )}
+          </div>
+        )}
       </div>
-      
+
       <div className="blog-title-section">
         {editable ? (
           <input
@@ -152,34 +272,14 @@ export default function Blog() {
 
       {/* Body */}
       <div className="blog-body-section">
-        <textarea
-          ref={(el) => {
-            if (el) {
-              el.style.height = "auto";
-              el.style.height = el.scrollHeight + "px";
-            }
-          }}
-          value={blog.body}
-          readOnly={!editable}
-          className="blog-body-textarea"
-          onChange={(e) => {
-            const newBody = e.target.value;
-            setBlog((prev) => ({ ...prev, body: newBody }));
-
-            // const roomId = `${blog._id}`;
-            // if (socketRef.current && editable) {
-            //   socketRef.current.emit("send-body", {
-            //     roomId,
-            //     body: newBody,
-            //   });
-            // }
-
-            const el = e.target;
-            el.style.height = "auto";
-            el.style.height = el.scrollHeight + "px";
-          }}
-          rows={1}
-        />
+      <textarea
+        ref={areaRef}
+        value={blog.body}
+        readOnly={!editable}
+        className="blog-body-textarea"
+        onChange={handleChange}
+        rows={1}
+      />
       </div>
 
       {/* Author Info */}
@@ -199,7 +299,6 @@ export default function Blog() {
 
       {/* Comments */}
       <div className="comment-section">
-        {/* <h2 className="comment-heading">Comments Section</h2> */}
         {user && (
           <form onSubmit={handleCommentSubmit} className="comment-form">
             <input
@@ -259,9 +358,9 @@ export default function Blog() {
           ))}
         </div>
       </div>
-      <footer className="copy-right">
+      {/* <footer className="copy-right">
         © 2025 Blogify. All rights reserved.
-      </footer>
+      </footer> */}
 
       {/* Chatbot */}
       <div>
